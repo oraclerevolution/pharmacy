@@ -19,26 +19,40 @@ export class PharmaciesService {
 
     private scrapePharmacies(html: string) {
         const $ = cheerio.load(html);
-        const pharmacyElements = $('div.lp-grid-box').find('a');
-        const dataToReturn = [];
-        // console.log("pharmacyElements", typeof pharmacyElements);
-        // const keys = Object.keys(pharmacyElements);
-        // // console.log("keys", keys);
-        // const premierElement = pharmacyElements[keys[0]].childre;
-        // console.log(premierElement);
+        const pharmacyDomData = $('div.lp-grid-box').find('a');
+        const pharmacyDomIndicator = $('div.lp-grid-box-bottom').find('.gaddress');
+        const listePharmacies = [];
+        const listeIndications = [];
         
-        pharmacyElements.map((index, element) => {
+        pharmacyDomData.map((_index, element) => {
             const link = $(element).text();
-            dataToReturn.push({
+            listePharmacies.push({
                 link
             })
         })
-        const pharmaciesContenantMotCle = dataToReturn.filter(item => item.link.includes("Pharmacie "));
-        const nouveauTableau = pharmaciesContenantMotCle.map(item => {
+
+        pharmacyDomIndicator.map((_index, element) => {
+            const indicator = $(element).text();
+            listeIndications.push({
+                indicator
+            })
+        })
+
+        const FiltrePharmacies = listePharmacies.filter(item => item.link.includes("Pharmacie "));
+        const pharmacies = FiltrePharmacies.map(item => {
             return {
                 link: item.link.replace(/[\t\n]/g, "")
             };
-          });
-        return nouveauTableau;
+        });
+
+        const result = pharmacies.map((pharmacie, index) => {
+            const indication = listeIndications[index].indicator;
+            return {
+              pharmacie: pharmacie.link,
+              indication: indication
+            };
+        });
+
+        return result;
     }
 }
