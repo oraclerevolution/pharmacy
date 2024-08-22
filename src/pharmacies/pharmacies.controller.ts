@@ -9,9 +9,9 @@ export class PharmaciesController {
   constructor(private readonly pharmaciesService: PharmaciesService) {}
 
   @Get('de-garde')
-  async getPharmaciesDeGarde(@Query('commune') payload: GetPharmacyDto) {
+  async getPharmaciesDeGarde(@Query() payload: GetPharmacyDto) {
     const pharmaciesDeGarde = await this.pharmaciesService.getPharmacies(
-      payload.commune,
+      payload,
     );
     return { pharmaciesDeGarde };
   }
